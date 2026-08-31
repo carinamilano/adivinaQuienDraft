@@ -8,8 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * MODO 2: MAQUINA VS MAQUINA (simetrico, con todo el proceso a la
- * vista y etiquetado por cada maquina).
+ * MODO 2: MAQUINA VS MAQUINA
  * Es el modo que mas exhibe el algoritmo Greedy: ambas maquinas usan
  * DecisorGreedy para elegir que preguntar, y en cada turno se imprime
  * el detalle completo de la decision (que caracteristica se evaluo,

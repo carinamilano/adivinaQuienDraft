@@ -12,7 +12,7 @@ import java.util.Scanner;
 /**
  * MODO 1: JUGADOR VS MAQUINA (simetrico: ambos preguntan y ambos
  * reducen su propio grupo de candidatos).
- *
+
  * Usa BuscadorBinario (Divide y Conquista) para encontrar el personaje
  * elegido por ID al arrancar, y ademas para permitirle al jugador
  * "arriesgar" un ID directo en cualquier turno (tal como pide la
