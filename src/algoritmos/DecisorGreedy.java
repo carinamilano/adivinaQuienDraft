@@ -62,7 +62,8 @@ public class DecisorGreedy {
         todasLasCaracteristicas.add(new Caracteristica("esHumano"));
         // Nota: "esMujer" NO se incluye aca. Ya se usa para el orden
         // inicial del array (agrupado por genero), no tiene sentido
-        // volver a "preguntarla" durante la partida.
+        // volver a "preguntarla" durante la partida, ademas hay 12 que son mujer y 11 que no
+        // entonces como es casi 50 y 50 la maquina a a hacer siempre esa primer pregunta
     }
 
     /**
