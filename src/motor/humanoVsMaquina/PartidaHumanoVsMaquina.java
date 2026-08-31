@@ -40,9 +40,6 @@ public class PartidaHumanoVsMaquina {
     {
         System.out.println("\n--- Jugador vs Maquina ---");
 
-        // El jugador elige su personaje secreto. La maquina NUNCA accede
-        // directamente a esta variable, solo puede "preguntar" por
-        // caracteristicas a traves del metodo evaluar de Caracteristica.
         System.out.print("Elegi el ID de tu personaje secreto (1-23): ");
         int idSecretoJugador = teclado.nextInt();
         teclado.nextLine();
@@ -55,16 +52,10 @@ public class PartidaHumanoVsMaquina {
             return;
         }
 
-        // La maquina elige su propio secreto al azar entre todos.
-        // El jugador tampoco accede directamente a esta variable: solo
-        // puede consultarla a traves de sus propias preguntas o
-        // arriesgando un ID (Busqueda Binaria) sin ver la variable en si.
         Personaje secretoMaquina = personajes[(int) (Math.random() * personajes.length)];
         System.out.println("(La maquina ya eligio su personaje secreto, no se muestra)");
 
-        // Grupo que maneja la MAQUINA para adivinar el secreto del JUGADOR
         List<Personaje> vivosMaquina = new ArrayList<>();
-        // Grupo que maneja el JUGADOR para adivinar el secreto de la MAQUINA
         List<Personaje> vivosJugador = new ArrayList<>();
         for (Personaje p : personajes)
         {
@@ -101,7 +92,9 @@ public class PartidaHumanoVsMaquina {
                 }
                 else
                 {
-                    System.out.println("La maquina se equivoco.");
+                    System.out.println("La maquina se equivoco. Pierde la maquina.");
+                    terminado = true;
+                    continue;
                 }
             }
             else
@@ -111,7 +104,30 @@ public class PartidaHumanoVsMaquina {
 
                 if (preguntaMaquina == null)
                 {
-                    System.out.println("La maquina no tiene mas preguntas utiles.");
+                    // El Greedy se quedo sin preguntas que sirvan (candidatos
+                    // "gemelos" en las caracteristicas del pool, como pasa con
+                    // Spider-Gwen y Spiderman, que solo difieren en esMujer,
+                    // caracteristica excluida a proposito). Como ultimo
+                    // recurso, la maquina arriesga al azar entre los que quedan
+                    // en vez de trabarse sin poder terminar la partida.
+                    System.out.println("La maquina no tiene mas preguntas utiles, arriesga al azar entre "
+                            + vivosMaquina.size() + " candidatos.");
+
+                    Personaje adivinadoAlAzar = vivosMaquina.get((int) (Math.random() * vivosMaquina.size()));
+                    System.out.println("La maquina arriesga que tu personaje es: " + adivinadoAlAzar.getNombre());
+
+                    if (adivinadoAlAzar == secretoJugador)
+                    {
+                        System.out.println(">>> La maquina ADIVINO tu personaje! Gana la maquina. <<<");
+                        terminado = true;
+                        continue;
+                    }
+                    else
+                    {
+                        System.out.println("La maquina se equivoco. Pierde la maquina.");
+                        terminado = true;
+                        continue;
+                    }
                 }
                 else
                 {
@@ -152,7 +168,9 @@ public class PartidaHumanoVsMaquina {
                     }
                     else
                     {
-                        System.out.println("No era ese. Raro, revisa tus respuestas anteriores.");
+                        System.out.println("No era ese. Perdiste. Gana la maquina.");
+                        terminado = true;
+                        continue;
                     }
                 }
             }
@@ -187,7 +205,9 @@ public class PartidaHumanoVsMaquina {
                     }
                     else
                     {
-                        System.out.println("No era " + candidatoArriesgado.getNombre() + ". Perdiste el turno de pregunta.");
+                        System.out.println("No era " + candidatoArriesgado.getNombre() + ". Perdiste. Gana la maquina.");
+                        terminado = true;
+                        continue;
                     }
                 }
                 else
@@ -218,7 +238,7 @@ public class PartidaHumanoVsMaquina {
                             boolean respuesta = preguntaJugador.evaluar(secretoMaquina);
 
                             System.out.println("Respuesta: el personaje de la maquina "
-                                    + (respuesta ? "SI" : "NO") + " cumple '" + preguntaJugador.getNombre() + "'");
+                                    + (respuesta ? "SI" : "NO") + " '" + preguntaJugador.getNombre() + "'");
 
                             preguntasHechasPorJugador.add(preguntaJugador.getNombre());
 

@@ -34,9 +34,7 @@ public class PartidaMaquinaVsMaquina {
 
         System.out.println("(Los secretos de ambas maquinas se ocultan; solo se muestra el proceso de busqueda)");
 
-        // Grupo que maneja la MAQUINA 1 para adivinar el secreto de la MAQUINA 2
         List<Personaje> vivosM1 = new ArrayList<>();
-        // Grupo que maneja la MAQUINA 2 para adivinar el secreto de la MAQUINA 1
         List<Personaje> vivosM2 = new ArrayList<>();
         for (Personaje p : personajes)
         {
@@ -54,13 +52,6 @@ public class PartidaMaquinaVsMaquina {
         {
             System.out.println("\n========== TURNO " + turno + " ==========");
 
-            // Flags para saber si en ESTE turno cada maquina pudo hacer
-            // algo util (o adivinar, o preguntar). Si ninguna de las dos
-            // puede avanzar en el mismo turno, cortamos para no quedar
-            // en loop infinito.
-            boolean m1AvanzoAlgo = false;
-            boolean m2AvanzoAlgo = false;
-
             // -----------------------------------------------------------
             // MAQUINA 1 pregunta sobre el secreto de la MAQUINA 2
             // -----------------------------------------------------------
@@ -70,7 +61,6 @@ public class PartidaMaquinaVsMaquina {
             {
                 Personaje adivinado = vivosM1.get(0);
                 System.out.println("[MAQUINA 1] Arriesga que el secreto de M2 es: " + adivinado.getNombre());
-                m1AvanzoAlgo = true;
                 if (adivinado == secretoM2)
                 {
                     System.out.println(">>> MAQUINA 1 ADIVINO el secreto de MAQUINA 2! Gana M1. <<<");
@@ -84,7 +74,6 @@ public class PartidaMaquinaVsMaquina {
 
                 if (preguntaM1 != null)
                 {
-                    m1AvanzoAlgo = true;
                     boolean respuesta = preguntaM1.evaluar(secretoM2);
 
                     System.out.println("[MAQUINA 1] Pregunta: '" + preguntaM1.getNombre()
@@ -98,7 +87,27 @@ public class PartidaMaquinaVsMaquina {
                 }
                 else
                 {
-                    System.out.println("[MAQUINA 1] No quedan preguntas utiles.");
+                    // El Greedy se quedo sin preguntas que sirvan (candidatos
+                    // "gemelos" en las caracteristicas del pool). Como ultimo
+                    // recurso, M1 arriesga al azar entre los que quedan.
+                    System.out.println("[MAQUINA 1] No quedan preguntas utiles, arriesga al azar entre "
+                            + vivosM1.size() + " candidatos.");
+
+                    Personaje adivinadoAlAzarM1 = vivosM1.get((int) (Math.random() * vivosM1.size()));
+                    System.out.println("[MAQUINA 1] Arriesga que el secreto de M2 es: " + adivinadoAlAzarM1.getNombre());
+
+                    if (adivinadoAlAzarM1 == secretoM2)
+                    {
+                        System.out.println(">>> MAQUINA 1 ADIVINO el secreto de MAQUINA 2! Gana M1. <<<");
+                        terminado = true;
+                        continue;
+                    }
+                    else
+                    {
+                        System.out.println("[MAQUINA 1] Se equivoco. Pierde M1, gana M2.");
+                        terminado = true;
+                        continue;
+                    }
                 }
             }
 
@@ -111,7 +120,6 @@ public class PartidaMaquinaVsMaquina {
             {
                 Personaje adivinado = vivosM2.get(0);
                 System.out.println("[MAQUINA 2] Arriesga que el secreto de M1 es: " + adivinado.getNombre());
-                m2AvanzoAlgo = true;
                 if (adivinado == secretoM1)
                 {
                     System.out.println(">>> MAQUINA 2 ADIVINO el secreto de MAQUINA 1! Gana M2. <<<");
@@ -125,7 +133,6 @@ public class PartidaMaquinaVsMaquina {
 
                 if (preguntaM2 != null)
                 {
-                    m2AvanzoAlgo = true;
                     boolean respuesta = preguntaM2.evaluar(secretoM1);
 
                     System.out.println("[MAQUINA 2] Pregunta: '" + preguntaM2.getNombre()
@@ -139,17 +146,27 @@ public class PartidaMaquinaVsMaquina {
                 }
                 else
                 {
-                    System.out.println("[MAQUINA 2] No quedan preguntas utiles.");
-                }
-            }
+                    // Mismo criterio que M1: si no hay preguntas utiles,
+                    // arriesga al azar en vez de trabarse.
+                    System.out.println("[MAQUINA 2] No quedan preguntas utiles, arriesga al azar entre "
+                            + vivosM2.size() + " candidatos.");
 
-            // Corte de seguridad: si NINGUNA de las dos pudo avanzar en
-            // este turno (ni preguntar, ni adivinar), no tiene sentido
-            // seguir turnando - terminamos sin ganador claro.
-            if (!m1AvanzoAlgo && !m2AvanzoAlgo)
-            {
-                System.out.println("\nNinguna maquina puede seguir avanzando. Fin de la partida sin ganador claro.");
-                terminado = true;
+                    Personaje adivinadoAlAzarM2 = vivosM2.get((int) (Math.random() * vivosM2.size()));
+                    System.out.println("[MAQUINA 2] Arriesga que el secreto de M1 es: " + adivinadoAlAzarM2.getNombre());
+
+                    if (adivinadoAlAzarM2 == secretoM1)
+                    {
+                        System.out.println(">>> MAQUINA 2 ADIVINO el secreto de MAQUINA 1! Gana M2. <<<");
+                        terminado = true;
+                        continue;
+                    }
+                    else
+                    {
+                        System.out.println("[MAQUINA 2] Se equivoco. Pierde M2, gana M1.");
+                        terminado = true;
+                        continue;
+                    }
+                }
             }
 
             turno++;

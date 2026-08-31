@@ -6,12 +6,12 @@ import java.util.List;
 
 /**
  * ALGORITMO: Greedy (voraz).
- *
+
  * POR QUE LO USAMOS ACA:
  * En cada turno la maquina tiene que decidir QUE caracteristica preguntar
  * (vuela, usaCapa, esDC, etc.) para achicar lo mas posible el grupo de
  * personajes "vivos" (los que todavia podrian ser el personaje secreto).
- *
+
  * ELEMENTOS DEL ALGORITMO GREEDY (mismo molde que "el problema del cambio"
  * de monedas, visto en la teoria):
  *  - CONJUNTO DE CANDIDATOS: las caracteristicas todavia no preguntadas.
@@ -22,7 +22,7 @@ import java.util.List;
  *    preguntar "vuela" no aporta informacion).
  *  - FUNCION SOLUCION: se llega a la solucion cuando queda 1 solo
  *    personaje candidato.
- *
+
  * POR QUE "MEJOR PREGUNTA" = LA MAS PAREJA (no la que mas descarta ni la
  * que mas conserva):
  * No controlamos la respuesta que nos va a tocar, asi que hay que asumir

@@ -98,11 +98,11 @@ public class GestorPartida {
         // --- Femeninos ---
         personajes[0]  = new Personaje(7,  GENERO_FEMENINO, "Wonder Woman",     true,  false, true,  true, true,  false, true,  false);
         personajes[1]  = new Personaje(14, GENERO_FEMENINO, "Supergirl",        true,  true,  true,  true, false, false, true,  false);
-        personajes[2]  = new Personaje(3,  GENERO_FEMENINO, "Batgirl",          false, true,  true,  true, false, true,  false, true);
+        personajes[2]  = new Personaje(3,  GENERO_FEMENINO, "Batgirl",          false, true,  true,  true, false, true,  true, true);
         personajes[3]  = new Personaje(21, GENERO_FEMENINO, "Gatubela",         false, false, true,  true, false, true,  false, true);
         personajes[4]  = new Personaje(9,  GENERO_FEMENINO, "Harley Quinn",     false, false, true,  true, false, false, false, true);
         personajes[5]  = new Personaje(12, GENERO_FEMENINO, "Gamora",           false, false, false, true, false, false, true,  false);
-        personajes[6]  = new Personaje(5,  GENERO_FEMENINO, "Bruja Escarlata",  true,  true,  false, true, true,  false, false, true);
+        personajes[6]  = new Personaje(5,  GENERO_FEMENINO, "Bruja Escarlata",  true,  true,  false, true, true,  false, false, false);
         personajes[7]  = new Personaje(18, GENERO_FEMENINO, "Capitana Marvel",  true,  false, false, true, false, false, true,  false);
         personajes[8]  = new Personaje(2,  GENERO_FEMENINO, "Viuda Negra",      false, false, false, true, false, false, false, true);
         personajes[9]  = new Personaje(23, GENERO_FEMENINO, "Spider-Gwen",      false, false, false, true, false, true,  true,  true);
