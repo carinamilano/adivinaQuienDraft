@@ -49,6 +49,11 @@ public class MiVentana {
     // Mapa para conectar cada botón visual con su objeto Personaje correspondiente
     private Map<JButton, Personaje> mapaPersonajes;
 
+    private motor.GestorPartida gestorPartida;
+    private Personaje personajeSecretoPartida;
+
+    private Personaje personajeSecretoMaquina;
+
     public MiVentana() {
         // Inicializamos el mapa de personajes
         mapaPersonajes = new HashMap<>();
@@ -84,6 +89,55 @@ public class MiVentana {
         configurarBotonPersonaje(doctorStrangeButton, "doctorstrange.png", "Dr. Strange");
         configurarBotonPersonaje(hulkButton, "hulk.png", "Hulk");
 
+        gestorPartida = new motor.GestorPartida();
+
+        // Inicializamos el mapa de personajes
+        mapaPersonajes = new HashMap<>();
+        gestorPartida = new motor.GestorPartida();
+
+        // La máquina elige un personaje secreto aleatorio para esta partida
+        Personaje[] listaMotor = gestorPartida.getPersonajes();
+        int indiceAleatorio = (int) (Math.random() * listaMotor.length);
+        personajeSecretoMaquina = listaMotor[indiceAleatorio];
+
+        // (Para pruebas: podés ver en la consola de IntelliJ qué personaje eligió la máquina)
+        System.out.println("[DEBUG] El personaje secreto de la máquina es: " + personajeSecretoMaquina.getNombre());
+
+
+        // Mapeamos cada botón con su respectivo personaje del motor según el nombre
+        // (Asegurate de que los nombres de los personajes en el array coincidan con los textos de los botones)
+        for (Personaje p : listaMotor) {
+            switch (p.getNombre()) {
+                case "Wonder Woman": mapaPersonajes.put(wonderwomanButton, p); break;
+                case "Supergirl": mapaPersonajes.put(supergirlButton, p); break;
+                case "Batgirl": mapaPersonajes.put(batgirlButton, p); break;
+                case "Gatubela": mapaPersonajes.put(gatubelaButton, p); break;
+                case "Harley Quinn": mapaPersonajes.put(harleyQuinnButton, p); break;
+                case "Flash": mapaPersonajes.put(flashButton, p); break;
+                case "Bruja Escarlata": mapaPersonajes.put(brujaEscarlataButton, p); break;
+                case "Capitana Marvel": mapaPersonajes.put(capitanaMarvelButton, p); break;
+                case "Viuda Negra": mapaPersonajes.put(viudaNegraButton, p); break;
+                case "Gamora": mapaPersonajes.put(gamoraButton, p); break;
+                case "Spider-Gwen": mapaPersonajes.put(spiderGwenButton, p); break;
+                case "Shazam": mapaPersonajes.put(shazamButton, p); break;
+                case "Hela": mapaPersonajes.put(helaButton, p); break;
+                case "Tormenta": mapaPersonajes.put(tormentaButton, p); break;
+                case "Superman": mapaPersonajes.put(supermanButton, p); break;
+                case "Batman": mapaPersonajes.put(batmanButton, p); break;
+                case "Aquaman": mapaPersonajes.put(aquamanButton, p); break;
+                case "Deadpool": mapaPersonajes.put(deadpoolButton, p); break;
+                case "Iron Man": mapaPersonajes.put(ironManButton, p); break;
+                case "Thor": mapaPersonajes.put(thorButton, p); break;
+                case "Spiderman": mapaPersonajes.put(spidermanButton, p); break;
+                case "Doctor Strange": mapaPersonajes.put(doctorStrangeButton, p); break;
+                case "Hulk": mapaPersonajes.put(hulkButton, p); break;
+            }
+        }
+
+
+
+
+        /**
         // Asociamos cada botón con su respectiva entidad Personaje para poder filtrarlos
         // (ID, Genero, Nombre, vuela, usaCapa, esDC, esMujer, tienePoderesMagicos, usaMascara, tieneSuperFuerza, esHumano)
         mapaPersonajes.put(wonderwomanButton, new Personaje(1, "Femenino", "Wonder Woman", true, false, true, true, true, false, true, false));
@@ -109,6 +163,7 @@ public class MiVentana {
         mapaPersonajes.put(spidermanButton, new Personaje(21, "Masculino", "Spider-Man", false, false, false, false, false, true, true, true));
         mapaPersonajes.put(doctorStrangeButton, new Personaje(22, "Masculino", "Dr. Strange", true, false, false, false, true, false, false, true));
         mapaPersonajes.put(hulkButton, new Personaje(23, "Masculino", "Hulk", false, false, false, false, false, false, true, false));
+        **/
 
         // Inicializamos las preguntas disponibles basadas exactamente en los atributos de la clase Personaje
         preguntasDisponibles = new java.util.ArrayList<>();
@@ -204,40 +259,37 @@ public class MiVentana {
                             javax.swing.JOptionPane.QUESTION_MESSAGE
                     );
 
-                    // Si el usuario apretó OK y eligió algo
+                    // Si el usuario apretó OK y eligió una pregunta
                     if (resultado == javax.swing.JOptionPane.OK_OPTION) {
                         String preguntaSeleccionada = (String) comboPreguntas.getSelectedItem();
 
                         // 1. La eliminamos de la lista para que no vuelva a aparecer
                         preguntasDisponibles.remove(preguntaSeleccionada);
 
-                        // Preguntamos la respuesta de la máquina (Sí / No)
-                        int respuestaMaquina = javax.swing.JOptionPane.showConfirmDialog(
+                        // 2. LA MÁQUINA RESPONDE SOLA: Evaluamos la pregunta contra su personaje secreto
+                        boolean respuestaSi = evaluarPregunta(personajeSecretoMaquina, preguntaSeleccionada);
+
+                        // 3. Mostramos la respuesta real de la máquina en pantalla
+                        String textoRespuesta = respuestaSi ? "¡SÍ!" : "¡NO!";
+                        javax.swing.JOptionPane.showMessageDialog(
                                 null,
-                                "¿La respuesta a:\n\"" + preguntaSeleccionada + "\" es SÍ?",
-                                "Respuesta de la Máquina",
-                                javax.swing.JOptionPane.YES_NO_OPTION
+                                "Pregunta: " + preguntaSeleccionada + "\n\nRespuesta de la Máquina: " + textoRespuesta,
+                                "Respuesta del Servidor",
+                                javax.swing.JOptionPane.INFORMATION_MESSAGE
                         );
 
-                        boolean respuestaSi = (respuestaMaquina == javax.swing.JOptionPane.YES_OPTION);
-
-                        // 2. FILTRAR LA GRILLA: Recorremos los botones y descartamos los que no coincidan
+                        // 4. FILTRAR LA GRILLA: Recorremos los botones y descartamos los que no coincidan
                         for (Map.Entry<JButton, Personaje> entry : mapaPersonajes.entrySet()) {
                             JButton boton = entry.getKey();
                             Personaje p = entry.getValue();
 
                             boolean cumpleCondicion = evaluarPregunta(p, preguntaSeleccionada);
 
-                            // Si la respuesta fue SÍ y el personaje NO la cumple (o viceversa), se descarta visualmente
+                            // Si la respuesta de la máquina fue SÍ y el personaje NO la cumple (o viceversa), se descarta
                             if (cumpleCondicion != respuestaSi) {
                                 descartarPersonajeVisualmente(boton);
                             }
                         }
-
-                        javax.swing.JOptionPane.showMessageDialog(null,
-                                "Pregunta realizada y grilla actualizada.",
-                                "Turno de Pregunta",
-                                javax.swing.JOptionPane.INFORMATION_MESSAGE);
                     }
                 }
             });
@@ -269,10 +321,6 @@ public class MiVentana {
                     // 2. Creamos un array con los nombres de los personajes vivos para el ComboBox
                     String[] nombresVivos = new String[personajesVivos.size()];
                     for (int i = 0; i < personajesVivos.size(); i++) {
-                        nombresVivos[i] = personajesVivos.get(i != -1 ? i : i).getNombre(); // Corrección simple de índice
-                    }
-                    // (Forma limpia para los nombres):
-                    for (int i = 0; i < personajesVivos.size(); i++) {
                         nombresVivos[i] = personajesVivos.get(i).getNombre();
                     }
 
@@ -290,22 +338,19 @@ public class MiVentana {
                     if (resultado == javax.swing.JOptionPane.OK_OPTION) {
                         String personajeElegido = (String) comboArriesgar.getSelectedItem();
 
-                        // TODO: Acá deberás compararlo con el personaje secreto real de tu partida
-                        // Ejemplo simulado: Asumimos por ahora que el secreto es "Batman" o conectas tu variable de partida
-                        String personajeSecretoReal = "Batman";
-
-                        if (personajeElegido.equals(personajeSecretoReal)) {
+                        // CORREGIDO: Usamos personajeSecretoMaquina que es la que está inicializada
+                        if (personajeElegido.equalsIgnoreCase(personajeSecretoMaquina.getNombre())) {
                             javax.swing.JOptionPane.showMessageDialog(null,
                                     "¡Felicidades! Adivinaste el personaje secreto: " + personajeElegido,
                                     "¡Victoria!",
                                     javax.swing.JOptionPane.INFORMATION_MESSAGE);
 
-                            // Opcional: Devolver al menú al ganar
+                            // Devolver al menú al ganar
                             java.awt.CardLayout cl = (java.awt.CardLayout) panelPrincipal.getLayout();
                             cl.show(panelPrincipal, "PanelInicio");
                         } else {
                             javax.swing.JOptionPane.showMessageDialog(null,
-                                    "¡Fallaste! Elegiste a " + personajeElegido + " y no era el correcto.",
+                                    "¡Fallaste! El personaje secreto era: " + personajeSecretoMaquina.getNombre(),
                                     "Game Over",
                                     javax.swing.JOptionPane.ERROR_MESSAGE);
                         }

@@ -130,4 +130,13 @@ public class GestorPartida {
             System.out.println(p.mostrarInfo());
         }
     }
+
+    // para que la GUI pueda leer los personajes
+    public Personaje[] getPersonajes() {
+        if (personajes == null) {
+            cargarPersonajes();
+            ordenadorMerge.ordenar(personajes);
+        }
+        return personajes;
+    }
 }
