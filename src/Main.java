@@ -1,5 +1,8 @@
 import GUI.MiVentana;
 import javax.swing.JFrame;
+import java.awt.Dimension;
+import java.awt.GraphicsEnvironment;
+import java.awt.Rectangle;
 
 /**
  * Punto de entrada del programa. Inicializa la interfaz gráfica principal.
@@ -11,11 +14,17 @@ public class Main {
         frame.setContentPane(ventana.getPanelPrincipal());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        // Tamaño amplio para que entren perfectamente los 23 personajes y sus nombres
-        frame.setSize(1000, 800);
+        // Tamaño ideal para que entren los 23 personajes y sus nombres, pero
+        // sin superar el area util de la pantalla (deja afuera la barra de
+        // tareas) para que en notebooks mas chicas no se corten los botones
+        // de abajo (Preguntar/Arriesgar/Volver al Menu).
+        Rectangle pantallaUtil = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+        int ancho = Math.min(1000, pantallaUtil.width);
+        int alto = Math.min(800, pantallaUtil.height);
+        frame.setSize(new Dimension(ancho, alto));
 
         frame.setLocationRelativeTo(null);
-        frame.setResizable(false);
+        frame.setResizable(true);
         frame.setVisible(true);
     }
 }
