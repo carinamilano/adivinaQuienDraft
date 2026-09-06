@@ -1,5 +1,6 @@
 package GUI;
 
+import algoritmos.BuscadorBinario;
 import algoritmos.Caracteristica;
 import algoritmos.DecisorGreedy;
 import entidades.Personaje;
@@ -60,6 +61,10 @@ public class MiVentana {
 
     // --- Misma logica que usa la consola (algoritmos/DecisorGreedy) ---
     private DecisorGreedy decisorGreedy;
+    // Misma Busqueda Binaria (Divide y Conquista) que usa PartidaHumanoVsMaquina
+    // por consola: la GUI resuelve toda seleccion por ID, no por posicion en
+    // la lista, para que el algoritmo aplicado sea el mismo en ambos modos.
+    private BuscadorBinario buscadorBinario;
     private List<Personaje> vivos; // candidatos del secreto de la maquina, compatibles con tus respuestas
     private List<String> preguntasHechas; // preguntas que VOS ya le hiciste a la maquina
     private List<Personaje> vivosMaquina; // candidatos de TU secreto, compatibles con lo que respondiste
@@ -71,6 +76,7 @@ public class MiVentana {
         mapaPersonajes = new HashMap<>();
         gestorPartida = new motor.GestorPartida();
         decisorGreedy = new DecisorGreedy();
+        buscadorBinario = new BuscadorBinario();
 
         cargarIconosPersonajes();
 
@@ -269,12 +275,15 @@ public class MiVentana {
                         return;
                     }
 
-                    String[] nombresVivos = new String[vivos.size()];
+                    // Igual que arriba: se muestra "ID - Nombre" pero la
+                    // resolucion final es por ID via BuscadorBinario, no por
+                    // posicion en el combo.
+                    String[] opcionesVivos = new String[vivos.size()];
                     for (int i = 0; i < vivos.size(); i++) {
-                        nombresVivos[i] = vivos.get(i).getNombre();
+                        opcionesVivos[i] = String.format("%02d - %s", vivos.get(i).getId(), vivos.get(i).getNombre());
                     }
 
-                    javax.swing.JComboBox<String> comboArriesgar = new javax.swing.JComboBox<>(nombresVivos);
+                    javax.swing.JComboBox<String> comboArriesgar = new javax.swing.JComboBox<>(opcionesVivos);
 
                     int resultado = javax.swing.JOptionPane.showConfirmDialog(
                             null,
@@ -285,7 +294,8 @@ public class MiVentana {
                     );
 
                     if (resultado == javax.swing.JOptionPane.OK_OPTION) {
-                        Personaje personajeElegido = vivos.get(comboArriesgar.getSelectedIndex());
+                        int idArriesgado = extraerId((String) comboArriesgar.getSelectedItem());
+                        Personaje personajeElegido = buscadorBinario.buscarPorId(gestorPartida.getPersonajes(), idArriesgado);
 
                         if (personajeElegido == personajeSecretoMaquina) {
                             javax.swing.JOptionPane.showMessageDialog(null,
@@ -315,6 +325,11 @@ public class MiVentana {
                 }
             });
         }
+    }
+
+    // Extrae el ID numerico de una opcion de combo con formato "ID - Nombre".
+    private int extraerId(String opcion) {
+        return Integer.parseInt(opcion.split(" - ")[0].trim());
     }
 
     // Carga (o recarga) el icono a color y el texto de los 22 botones de personaje
@@ -372,15 +387,19 @@ public class MiVentana {
         preguntasHechas = new ArrayList<>();
 
         // --- Elegis tu secreto: lo que la maquina tiene que adivinar ---
-        String[] nombres = new String[listaMotor.length];
+        // El combo muestra "ID - Nombre" pero la seleccion se resuelve por ID
+        // con BuscadorBinario (Divide y Conquista) sobre el array ya ordenado
+        // por ID, tal como pide la consigna, no por posicion en la lista.
+        String[] opcionesSecreto = new String[listaMotor.length];
         for (int i = 0; i < listaMotor.length; i++) {
-            nombres[i] = listaMotor[i].getNombre();
+            opcionesSecreto[i] = String.format("%02d - %s", listaMotor[i].getId(), listaMotor[i].getNombre());
         }
-        javax.swing.JComboBox<String> comboSecreto = new javax.swing.JComboBox<>(nombres);
+        javax.swing.JComboBox<String> comboSecreto = new javax.swing.JComboBox<>(opcionesSecreto);
         javax.swing.JOptionPane.showMessageDialog(null, comboSecreto,
                 "Elegí tu personaje secreto (la máquina va a tratar de adivinarlo)",
                 javax.swing.JOptionPane.PLAIN_MESSAGE);
-        personajeSecretoJugador = listaMotor[comboSecreto.getSelectedIndex()];
+        int idElegido = extraerId((String) comboSecreto.getSelectedItem());
+        personajeSecretoJugador = buscadorBinario.buscarPorId(listaMotor, idElegido);
 
         vivosMaquina = new ArrayList<>(Arrays.asList(listaMotor));
         preguntasHechasMaquina = new ArrayList<>();
