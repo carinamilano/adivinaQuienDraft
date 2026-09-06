@@ -9,8 +9,9 @@ import java.util.List;
 
  * POR QUE LO USAMOS ACA:
  * En cada turno la maquina tiene que decidir QUE caracteristica preguntar
- * (vuela, usaCapa, esDC, etc.) para achicar lo mas posible el grupo de
- * personajes "vivos" (los que todavia podrian ser el personaje secreto).
+ * (genero, calvicie, lentes, color de pelo) para achicar lo mas posible el
+ * grupo de personajes "vivos" (los que todavia podrian ser el personaje
+ * secreto).
 
  * ELEMENTOS DEL ALGORITMO GREEDY (mismo molde que "el problema del cambio"
  * de monedas, visto en la teoria):
@@ -18,8 +19,8 @@ import java.util.List;
  *  - FUNCION DE SELECCION: elegir la caracteristica que divide el grupo
  *    actual lo mas parejo posible (mas cerca de 50/50).
  *  - FUNCION DE FACTIBILIDAD: descartar caracteristicas ya usadas, o que
- *    no separan nada (si TODOS los vivos vuelan, o NINGUNO vuela,
- *    preguntar "vuela" no aporta informacion).
+ *    no separan nada (si TODOS los vivos son calvos, o NINGUNO lo es,
+ *    preguntar "calvo" no aporta informacion).
  *  - FUNCION SOLUCION: se llega a la solucion cuando queda 1 solo
  *    personaje candidato.
 
@@ -45,6 +46,17 @@ import java.util.List;
  * El metodo reducirGrupo() de aca abajo es el que, una vez que se sabe
  * la respuesta a la pregunta elegida, PARTE el grupo de vivos en dos
  * subgrupos (cumple / no cumple) y descarta el que no corresponde.
+ *
+ * FILTROS APLICABLES (consigna): Genero, Calvicie, Lentes y Color de pelo
+ * (colorado / negro / amarillo). El color de pelo tiene 3 valores, asi que
+ * se abre en 3 preguntas booleanas ("tiene el pelo colorado/negro/amarillo?"),
+ * dando un total de 6 caracteristicas preguntables.
+ *
+ * NOTA: en una version anterior "esMujer" (genero) se excluia del pool a
+ * proposito, porque el split de 12 mujeres / 11 varones es casi 50/50 y el
+ * Greedy la elegiria siempre como primera pregunta, quitandole variedad a
+ * la demostracion. Se reincorporo porque la consigna pide explicitamente
+ * "Genero" como uno de los filtros aplicables del juego.
  */
 public class DecisorGreedy {
 
@@ -53,17 +65,12 @@ public class DecisorGreedy {
     public DecisorGreedy()
     {
         todasLasCaracteristicas = new ArrayList<>();
-        todasLasCaracteristicas.add(new Caracteristica("vuela"));
-        todasLasCaracteristicas.add(new Caracteristica("usaCapa"));
-        todasLasCaracteristicas.add(new Caracteristica("esDC"));
-        todasLasCaracteristicas.add(new Caracteristica("tienePoderesMagicos"));
-        todasLasCaracteristicas.add(new Caracteristica("usaMascara"));
-        todasLasCaracteristicas.add(new Caracteristica("tieneSuperFuerza"));
-        todasLasCaracteristicas.add(new Caracteristica("esHumano"));
-        // Nota: "esMujer" NO se incluye aca. Ya se usa para el orden
-        // inicial del array (agrupado por genero), no tiene sentido
-        // volver a "preguntarla" durante la partida, ademas hay 12 que son mujer y 11 que no
-        // entonces como es casi 50 y 50 la maquina a a hacer siempre esa primer pregunta
+        todasLasCaracteristicas.add(new Caracteristica("esMujer"));
+        todasLasCaracteristicas.add(new Caracteristica("calvo"));
+        todasLasCaracteristicas.add(new Caracteristica("usaLentes"));
+        todasLasCaracteristicas.add(new Caracteristica("peloColorado"));
+        todasLasCaracteristicas.add(new Caracteristica("peloNegro"));
+        todasLasCaracteristicas.add(new Caracteristica("peloAmarillo"));
     }
 
     /**

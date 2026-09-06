@@ -5,6 +5,10 @@ Implementación del juego "Adivina Quién" (23 superhéroes) en dos modalidades 
 gráfica (Swing), usada como vehículo para aplicar los algoritmos de la
 materia: **Divide y Conquista** (Merge Sort y Búsqueda Binaria) y **Greedy**.
 
+Los filtros distinguibles entre personajes son exactamente los que pide la
+consigna: **Género, Calvicie, Lentes y Color de pelo** (Colorado / Negro /
+Amarillo).
+
 Este documento es la justificación formal pedida para la entrega: qué
 algoritmo se usó en cada punto, por qué ese y no otro visto en clase, y qué
 decisiones de diseño no serían obvias solo leyendo el código.
@@ -13,7 +17,7 @@ decisiones de diseño no serían obvias solo leyendo el código.
 
 | Paquete | Responsabilidad |
 |---|---|
-| `entidades` | `Personaje`: solo datos (id, género, nombre, 8 atributos booleanos). Cero lógica. |
+| `entidades` | `Personaje`: solo datos (id, género, nombre, calvicie, lentes, color de pelo). Cero lógica. |
 | `algoritmos` | Los tres algoritmos y la clase `Caracteristica` ("tarjeta de pregunta"). |
 | `motor` | `GestorPartida`: carga los 23 personajes, corre el Merge Sort inicial y muestra el menú. No implementa ningún modo de juego. |
 | `motor.humanoVsMaquina` | `PartidaHumanoVsMaquina`: modo 1, por consola. |
@@ -66,9 +70,9 @@ teoría.
   la selección "gratis" con un `HashMap`.
 
 **Por qué:** la consigna pide poder "lanzar directamente la suposición" de
-un ID. Como el array ya está ordenado (gracias a 2.1), no hace falta
-recorrerlo entero: se compara con el elemento del medio y se descarta la
-mitad que no puede contener el ID buscado.
+un ID en cualquier turno. Como el array ya está ordenado (gracias a 2.1), no
+hace falta recorrerlo entero: se compara con el elemento del medio y se
+descarta la mitad que no puede contener el ID buscado.
 
 **Complejidad:** O(log n). Con solo 23 personajes la diferencia contra
 lineal es cosmética, pero el ejercicio pedía demostrar el algoritmo, y ya
@@ -87,9 +91,13 @@ manualmente de un menú).
 
 **Elementos del algoritmo** (mismo molde que "el problema del cambio" visto
 en teoría):
-- **Conjunto de candidatos:** las 7 características todavía no preguntadas
-  (`vuela`, `usaCapa`, `esDC`, `tienePoderesMagicos`, `usaMascara`,
-  `tieneSuperFuerza`, `esHumano`).
+- **Conjunto de candidatos:** las características todavía no preguntadas.
+  Son exactamente los **filtros aplicables de la consigna** — Género,
+  Calvicie, Lentes y Color de pelo. Como el color de pelo tiene 3 valores
+  posibles (Colorado / Negro / Amarillo) y no es una pregunta sí/no, se abre
+  en 3 características booleanas separadas ("¿tiene el pelo colorado?",
+  "¿...negro?", "¿...amarillo?"). En total: `esMujer`, `calvo`, `usaLentes`,
+  `peloColorado`, `peloNegro`, `peloAmarillo` — 6 preguntas posibles.
 - **Función de selección:** la que divide el grupo de "vivos" más parejo
   posible (más cerca de 50/50).
 - **Función de factibilidad:** descarta preguntas ya hechas, y las que no
@@ -104,16 +112,20 @@ minimiza ese peor caso es la que divide más parejo. Por eso el código usa
 esos máximos.
 
 **Empates:** si dos o más características empatan en el mismo peor caso, se
-elige una al azar entre las empatadas (`DecisorGreedy.java:142-149`), para
-que la máquina no repita siempre la misma primera pregunta en cada partida.
+elige una al azar entre las empatadas (`DecisorGreedy.java`), para que la
+máquina no repita siempre la misma primera pregunta en cada partida. Con la
+base actual de 23 personajes esto pasa seguido en el primer turno: género,
+calvicie y lentes quedan empatados en el mismo peor caso (12), así que la
+primera pregunta de cada partida varía.
 
-**Fallback (candidatos "gemelos"):** con solo 7 características hay pares de
-personajes que nunca se diferencian entre sí en el pool de preguntas
-disponible (ej. Spider-Gwen y Spiderman solo difieren en `esMujer`, que se
-excluye a propósito — ver 3.2). Cuando `elegirMejorPregunta` devuelve `null`
-(no hay ninguna característica que separe al grupo), la máquina arriesga al
-azar entre los candidatos restantes en vez de trabarse sin poder terminar la
-partida.
+**Fallback (candidatos "gemelos"):** los 23 personajes se armaron a
+propósito para que ninguno comparta las 6 características con otro (dentro
+de cada género se usaron las 12 combinaciones distintas de calvicie × lentes
+× color de pelo), así que en la práctica el Greedy siempre logra aislar un
+único candidato. Aun así, `elegirMejorPregunta` puede devolver `null` si en
+algún momento dos candidatos quedan indistinguibles (por ejemplo, si se
+agregaran más personajes a futuro); en ese caso la máquina arriesga al azar
+entre los que quedan en vez de trabarse sin poder terminar la partida.
 
 **Dónde entra Divide y Conquista dentro del Greedy:** `reducirGrupo()`, una
 vez conocida la respuesta, **parte** el grupo de vivos en dos subgrupos
@@ -129,21 +141,36 @@ mantienen su propia lista de "vivos" y se van preguntando por turnos. Esto
 permite que el mismo `DecisorGreedy` se ejercite en ambos lados y que el
 modo Máquina vs Máquina tenga sentido como demostración pura del algoritmo.
 
-### 3.2 Por qué `esMujer` no es una pregunta del Greedy
-Está en `Personaje` y se usa para el orden inicial (agrupado por género),
-pero **no** se agrega a `todasLasCaracteristicas` en `DecisorGreedy`. Motivo
-documentado en el propio código
-(`DecisorGreedy.java:63-66`): con 12 mujeres y 11 varones el split es casi
-50/50, así que sería *siempre* la primera pregunta elegida por el Greedy en
-cualquier partida — le quita variedad a la demostración del algoritmo.
+### 3.2 Por qué `esMujer` (género) SÍ es una pregunta del Greedy
+En una versión anterior se había excluido a propósito, razonando que con 12
+mujeres y 11 varones el split es casi 50/50 y sería *siempre* la primera
+pregunta elegida, restándole variedad a la demostración. Se reincorporó
+porque la consigna pide explícitamente **"Género"** como uno de los filtros
+aplicables del juego — el requisito puntual de la consigna prevalece sobre
+la preferencia de variedad. En los hechos, esto terminó sin costo: género
+queda empatado con calvicie y lentes en el peor caso del primer turno (los
+tres dividen 12/11), así que el Greedy igual varía la primera pregunta por
+el desempate al azar.
 
-### 3.3 Consistencia consola/GUI
+### 3.3 Cómo se garantiza que ninguno de los dos accede al secreto del otro
+La consigna pide explícitamente que "la máquina no sabe, no puede acceder
+directamente a la variable del personaje elegido por el jugador humano" (y,
+por simetría, tampoco al revés). Esto se resuelve con un límite de diseño
+estricto: **`DecisorGreedy` nunca recibe el personaje secreto como
+parámetro** — solo recibe la lista de "vivos" y devuelve qué característica
+conviene preguntar. El único lugar que toca el objeto secreto es
+`Caracteristica.evaluar(secreto)`, que es una función neutral (hace de
+"personaje respondiendo la verdad a una pregunta puntual"), nunca parte del
+algoritmo de decisión. Así, el cerebro que decide qué preguntar jamás ve el
+secreto ajeno, solo la secuencia de respuestas sí/no que ya se le dieron.
+
+### 3.4 Consistencia consola/GUI
 Ambas interfaces llaman literalmente a las mismas clases de `algoritmos`
 (no hay una reimplementación paralela de Greedy o Búsqueda Binaria para la
 GUI). La GUI existe para mostrar el mismo motor con una experiencia más
 amigable, no como una versión alternativa del juego.
 
-### 3.4 Máquina vs Máquina: revelado turno a turno
+### 3.5 Máquina vs Máquina: revelado turno a turno
 `MiVentana.iniciarPartidaMaquinaVsMaquina()` corre la partida completa en
 memoria (reutilizando `PartidaMaquinaVsMaquina` tal cual), pero la captura
 de consola se corta por turno y se muestra en un diálogo con un botón
@@ -151,6 +178,16 @@ de consola se corta por turno y se muestra en un diálogo con un botón
 pregunta de M2) sin mostrar los que faltan, y como el texto se acumula, al
 llegar al final quedan visibles todas las decisiones tomadas durante la
 partida.
+
+### 3.6 Por qué los valores de calvicie/lentes/color de pelo no siempre son "realistas"
+Se priorizó que los 23 personajes fueran siempre distinguibles entre sí por
+sobre la fidelidad estética exacta de cada uno (algunos, como Gamora o
+Deadpool, sí coinciden con su caracterización habitual; otros no). Esto es
+a propósito: con solo 4 filtros (género, calvicie, lentes, color de pelo)
+hay 2×2×2×3 = 24 combinaciones posibles — apenas una más que 23 — así que
+armar los datos con cuidado (sin repetir combinación dentro de cada género)
+es lo que evita que el Greedy necesite el fallback al azar de la sección 2.3
+en una partida normal.
 
 ## 4. Algoritmos vistos en clase que **no** se aplicaron (y por qué)
 
@@ -178,7 +215,8 @@ correcta y no una aproximación de algo mejor.
 **¿Qué pasa si el Greedy no encuentra ninguna pregunta útil?**
 Devuelve `null` (ver 2.3, "candidatos gemelos") y el modo de juego que lo
 llama arriesga al azar entre los candidatos restantes, para no trabar la
-partida.
+partida. Con los 23 personajes actuales no debería ocurrir en una partida
+normal (ver 3.6), pero el resguardo queda en el código.
 
 **¿Por qué Búsqueda Binaria y no Búsqueda Lineal si son solo 23 elementos?**
 Ver tabla de la sección 4: la complejidad no es la razón práctica (con 23
@@ -192,6 +230,13 @@ qué preguntar es voraz, pero una vez que se sabe la respuesta, partir el
 grupo en dos y quedarse con el subgrupo correcto es "dividir y descartar
 una mitad" — la misma idea que Búsqueda Binaria, aplicada sobre un filtro
 de atributo en vez de un rango numérico.
+
+**¿Cómo se asegura el código que la máquina no "hace trampa" mirando el
+secreto del jugador?**
+Ver 3.3: el algoritmo de decisión (`DecisorGreedy`) nunca recibe el
+personaje secreto como parámetro, solo la lista de candidatos vivos. La
+única función que toca el secreto es `Caracteristica.evaluar()`, que es
+neutral (no decide nada, solo responde sí/no).
 
 **¿Por qué la GUI y la consola no comparten un modo de juego con
 polimorfismo (interfaz común)?**
