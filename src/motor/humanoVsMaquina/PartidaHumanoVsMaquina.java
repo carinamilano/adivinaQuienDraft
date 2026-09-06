@@ -105,13 +105,11 @@ public class PartidaHumanoVsMaquina {
                 if (preguntaMaquina == null)
                 {
                     // El Greedy se quedo sin preguntas que sirvan (candidatos
-                    // "gemelos": comparten los 6 filtros disponibles -
-                    // genero, calvicie, lentes y color de pelo). Con la base
-                    // actual de 23 personajes esto no deberia pasar (se
-                    // armaron a proposito sin combinaciones repetidas), pero
-                    // el fallback queda como resguardo. Como ultimo recurso,
-                    // la maquina arriesga al azar entre los que quedan en vez
-                    // de trabarse sin poder terminar la partida.
+                    // "gemelos" en las caracteristicas del pool, como pasa con
+                    // Spider-Gwen y Spiderman, que solo difieren en esMujer,
+                    // caracteristica excluida a proposito). Como ultimo
+                    // recurso, la maquina arriesga al azar entre los que quedan
+                    // en vez de trabarse sin poder terminar la partida.
                     System.out.println("La maquina no tiene mas preguntas utiles, arriesga al azar entre "
                             + vivosMaquina.size() + " candidatos.");
 

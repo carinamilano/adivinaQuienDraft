@@ -114,15 +114,15 @@ public class MiVentana {
         }
 
         // Texto legible para cada Caracteristica que maneja DecisorGreedy
-        // (los nombres internos son los mismos que usa Caracteristica.evaluar()).
-        // Cubren los filtros de la consigna: genero, calvicie, lentes y color de pelo.
+        // (los nombres internos son los mismos que usa Caracteristica.evaluar())
         textoPregunta = new HashMap<>();
-        textoPregunta.put("esMujer", "¿Es mujer?");
-        textoPregunta.put("calvo", "¿Es calvo/a?");
-        textoPregunta.put("usaLentes", "¿Usa lentes?");
-        textoPregunta.put("peloColorado", "¿Tiene el pelo colorado?");
-        textoPregunta.put("peloNegro", "¿Tiene el pelo negro?");
-        textoPregunta.put("peloAmarillo", "¿Tiene el pelo amarillo?");
+        textoPregunta.put("vuela", "¿El personaje vuela?");
+        textoPregunta.put("usaCapa", "¿Usa capa?");
+        textoPregunta.put("esDC", "¿Pertenece al universo de DC?");
+        textoPregunta.put("tienePoderesMagicos", "¿Tiene poderes mágicos?");
+        textoPregunta.put("usaMascara", "¿Usa máscara?");
+        textoPregunta.put("tieneSuperFuerza", "¿Tiene superfuerza?");
+        textoPregunta.put("esHumano", "¿Es humano?");
 
         // --- CONFIGURACIÓN DE LAS ETIQUETAS (JLabels) ---
 
