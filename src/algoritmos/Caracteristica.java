@@ -5,7 +5,7 @@ import entidades.Personaje;
 /**
  * Representa UNA pregunta posible del juego (ej: "vuela", "usaCapa").
  *
- * ANALOGIA: pensa esta clase como una "tarjeta de pregunta" del juego de
+ * ANALOGIA: es como una "tarjeta de pregunta" del juego de
  * mesa Adivina Quien. Cada tarjeta trae escrita una sola pregunta (el
  * campo "nombre"). Cuando le "mostras" la tarjeta a un personaje puntual
  * (llamando a evaluar(p)), la tarjeta misma sabe que atributo de

@@ -6,7 +6,7 @@ import entidades.Personaje;
  * ALGORITMO: Divide y Conquista (Busqueda Binaria).
  *
  * POR QUE LO USAMOS ACA:
- * La consigna dice que "a medida que avanza el juego los usuarios pueden
+ * "A medida que avanza el juego los usuarios pueden
  * lanzar directamente su suposicion". Cuando un jugador (humano o maquina)
  * arriesga un ID puntual, necesitamos confirmar rapido si existe y
  * encontrarlo. Como el array YA esta ordenado por ID (gracias a
@@ -21,7 +21,7 @@ import entidades.Personaje;
  *  - Si es menor, se descarta la mitad derecha y se sigue en la izquierda.
  *  - Caso base: el rango se cruza (no se encontro) o se encuentra el ID.
  *
- * Fijate que ACA NO HAY PASO DE "COMBINAR" (a diferencia de OrdenadorMerge):
+ * NO HAY PASO DE "COMBINAR" (a diferencia de OrdenadorMerge):
  * simplemente se descarta una mitad entera en cada paso.
  *
  * POR QUE NO USAMOS BUSQUEDA LINEAL:

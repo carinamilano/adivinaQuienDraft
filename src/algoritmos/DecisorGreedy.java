@@ -12,8 +12,7 @@ import java.util.List;
  * (vuela, usaCapa, esDC, etc.) para achicar lo mas posible el grupo de
  * personajes "vivos" (los que todavia podrian ser el personaje secreto).
 
- * ELEMENTOS DEL ALGORITMO GREEDY (mismo molde que "el problema del cambio"
- * de monedas, visto en la teoria):
+ * ELEMENTOS DEL ALGORITMO GREEDY:
  *  - CONJUNTO DE CANDIDATOS: las caracteristicas todavia no preguntadas.
  *  - FUNCION DE SELECCION: elegir la caracteristica que divide el grupo
  *    actual lo mas parejo posible (mas cerca de 50/50).
@@ -42,7 +41,7 @@ import java.util.List;
  *    elegir una pregunta.
  *
  * DONDE ENTRA DIVIDE Y CONQUISTA EN ESTA MISMA CLASE:
- * El metodo reducirGrupo() de aca abajo es el que, una vez que se sabe
+ * El metodo reducirGrupo() es el que, una vez que se sabe
  * la respuesta a la pregunta elegida, PARTE el grupo de vivos en dos
  * subgrupos (cumple / no cumple) y descarta el que no corresponde.
  */
@@ -61,8 +60,7 @@ public class DecisorGreedy {
         todasLasCaracteristicas.add(new Caracteristica("tieneSuperFuerza"));
         todasLasCaracteristicas.add(new Caracteristica("esHumano"));
         // Nota: "esMujer" NO se incluye aca. Ya se usa para el orden
-        // inicial del array (agrupado por genero), no tiene sentido
-        // volver a "preguntarla" durante la partida, ademas hay 12 que son mujer y 11 que no
+        // inicial del array (agrupado por genero), hay 12 que son mujer y 11 que no
         // entonces como es casi 50 y 50 la maquina a a hacer siempre esa primer pregunta
     }
 

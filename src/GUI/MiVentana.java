@@ -84,7 +84,6 @@ public class MiVentana {
         Personaje[] listaMotor = gestorPartida.getPersonajes();
 
         // Mapeamos cada botón con su respectivo personaje del motor según el nombre
-        // (Asegurate de que los nombres de los personajes en el array coincidan con los textos de los botones)
         for (Personaje p : listaMotor) {
             switch (p.getNombre()) {
                 case "Wonder Woman": mapaPersonajes.put(wonderwomanButton, p); break;
@@ -161,7 +160,6 @@ public class MiVentana {
         }
 
         // Arranca una partida Jugador vs Maquina, simetrica como en consola
-        // (la maquina tambien te pregunta a vos)
         jugadorVSMaquinaButton.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -532,12 +530,11 @@ public class MiVentana {
     private void configurarBotonPersonaje(javax.swing.JButton boton, String nombreArchivo, String nombreVisible) {
         if (boton == null) return;
 
-        // 1. Configuración del texto (¡Acá está la magia!)
+        // 1. Configuración del texto
         boton.setText(nombreVisible);
         boton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM); // Manda el texto abajo de la foto
         boton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER); // Centra el texto
 
-        // Opcional: Podés cambiarle la fuente y el tamaño para que se lea mejor
         boton.setFont(new java.awt.Font("Arial", java.awt.Font.BOLD, 12));
 
         // 2. Limpieza estética
@@ -613,7 +610,6 @@ public class MiVentana {
         };
     }
 
-    // Agregá esto al final de MiVentana.java
     public JPanel getPanelPrincipal() {
         return panelPrincipal;
     }
